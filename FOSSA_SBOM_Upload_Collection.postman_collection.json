@@ -1,0 +1,128 @@
+{
+  "info": {
+    "name": "FOSSA SBOM Upload Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Signed URL",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{FOSSA_TOKEN}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://app.fossa.io/api/components/signed_url?packageSpec={{package_spec}}&revision={{revision}}&fileType=sbom",
+          "protocol": "https",
+          "host": [
+            "app",
+            "fossa",
+            "io"
+          ],
+          "path": [
+            "api",
+            "components",
+            "signed_url"
+          ],
+          "query": [
+            {
+              "key": "packageSpec",
+              "value": "{{package_spec}}"
+            },
+            {
+              "key": "revision",
+              "value": "{{revision}}"
+            },
+            {
+              "key": "fileType",
+              "value": "sbom"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Upload SBOM to Signed URL",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/octet-stream",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{signed_url}}",
+          "host": [
+            "{{signed_url}}"
+          ]
+        },
+        "body": {
+          "mode": "file",
+          "file": {
+            "src": "/path/to/your/sbom/file.sbom"
+          }
+        }
+      }
+    },
+    {
+      "name": "Trigger FOSSA Build",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{FOSSA_TOKEN}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://app.fossa.io/api/components/build",
+          "protocol": "https",
+          "host": [
+            "app",
+            "fossa",
+            "io"
+          ],
+          "path": [
+            "api",
+            "components",
+            "build"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"archives\": [{\"packageSpec\": \"{{package_spec}}\", \"revision\": \"{{revision}}\", \"fileType\": \"sbom\"}], \"selectedTeams\": [{\"id\": team-id, \"name\": \"team-name\", \"organizationId\": org-id}]}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "FOSSA_TOKEN",
+      "value": "<your_fossa_token>"
+    },
+    {
+      "key": "package_spec",
+      "value": "name-of-sbom-project"
+    },
+    {
+      "key": "revision",
+      "value": "sbom-revision"
+    },
+    {
+      "key": "signed_url",
+      "value": "<signed_url>"
+    }
+  ]
+}
